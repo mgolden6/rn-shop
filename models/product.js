@@ -1,4 +1,4 @@
-const Product = {
+class Product {
   constructor(id, ownerId, title, imageUrl, description, price) {
     this.id = id;
     this.ownerId = ownerId;
@@ -6,5 +6,7 @@ const Product = {
     this.imageUrl = imageUrl;
     this.description = description;
     this.price = price;
-  },
-};
+  }
+}
+
+export default Product;
