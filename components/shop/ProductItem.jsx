@@ -86,10 +86,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
+    fontFamily: Theme.fonts.bold,
     fontSize: 18,
-    marginVertical: 4,
+    marginVertical: 2,
   },
   price: {
+    fontFamily: Theme.fonts.regular,
     fontSize: 14,
     color: Theme.colors.primary,
   },

@@ -48,12 +48,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   price: {
+    fontFamily: Theme.fonts.bold,
     fontSize: 20,
     color: Theme.colors.accent,
     textAlign: "center",
     marginVertical: 20,
   },
   description: {
+    fontFamily: Theme.fonts.regular,
     fontSize: 14,
     color: Theme.colors.primary,
     textAlign: "center",

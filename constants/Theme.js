@@ -4,4 +4,8 @@ export default {
     accent: "#888",
     light: "white",
   },
+  fonts: {
+    regular: "montserrat-regular",
+    bold: "montserrat-bold",
+  },
 };
