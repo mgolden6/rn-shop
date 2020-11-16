@@ -41,8 +41,6 @@ const ProductsNavigator = createStackNavigator(
         />
       ),
     },
-  },
-  {
     defaultNavigationOptions: defaultNavOptions,
   }
 );
