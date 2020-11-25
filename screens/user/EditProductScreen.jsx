@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  Alert,
   Platform,
   ScrollView,
   StyleSheet,
@@ -24,6 +25,7 @@ const EditProductScreen = (props) => {
   const [title, setTitle] = useState(
     editingProduct ? editingProduct.title : ""
   );
+  const [titleIsValid, setTitleIsValid] = useState(false);
   const [imageUrl, setImageUrl] = useState(
     editingProduct ? editingProduct.imageUrl : ""
   );
@@ -33,6 +35,12 @@ const EditProductScreen = (props) => {
   );
 
   const submitHandler = useCallback(() => {
+    if (!titleIsValid) {
+      Alert.alert("Wrong input", "Please correct the errors in the form.", [
+        { text: "OK" },
+      ]);
+      return;
+    }
     if (editingProduct) {
       dispatch(
         productsActions.updateProduct(productId, title, imageUrl, description)
@@ -51,6 +59,15 @@ const EditProductScreen = (props) => {
     });
   }, [submitHandler]);
 
+  const titleChangeHandler = (text) => {
+    if (text.trim().length === 0) {
+      setTitleIsValid(false);
+    } else {
+      setTitleIsValid(true);
+    }
+    setTitle(text);
+  };
+
   return (
     <ScrollView>
       <View style={styles.form}>
@@ -59,12 +76,13 @@ const EditProductScreen = (props) => {
           <TextInput
             style={styles.input}
             value={title}
-            onChangeText={(titleInput) => setTitle(titleInput)}
+            onChangeText={titleChangeHandler}
             autoCapitalize="words"
             autoCorrect
             returnKeyType="next"
           />
         </View>
+        {!titleIsValid && <Text>Please enter a valid title!</Text>}
         <View style={styles.formControl}>
           <Text style={styles.label}>Image URL</Text>
           <TextInput
