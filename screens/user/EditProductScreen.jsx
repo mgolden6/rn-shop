@@ -95,60 +95,70 @@ const EditProductScreen = (props) => {
     });
   }, [submitHandler]);
 
-  const inputChangeHandler = (inputId, text) => {
-    let isValid = false;
-    if (text.trim().length > 0) {
-      isValid = true;
-    }
-    dispatchFormState({
-      type: FORM_INPUT_UPDATE,
-      value: text,
-      isValid: isValid,
-      inputId: inputId,
-    });
-  };
+  const inputChangeHandler = useCallback(
+    (inputId, inputValue, inputValidity) => {
+      dispatchFormState({
+        type: FORM_INPUT_UPDATE,
+        inputId: inputId,
+        value: inputValue,
+        isValid: inputValidity,
+      });
+    },
+    [dispatchFormState]
+  );
 
   return (
     <ScrollView>
       <View style={styles.form}>
         <Input
+          id="title"
           label="Title"
-          value={formState.inputValues.title}
-          onChangeText={inputChangeHandler.bind(this, "title")}
           errorText="Please enter a valid Title!"
           autoCapitalize="words"
           autoCorrect
           returnKeyType="next"
+          onInputChange={inputChangeHandler}
+          initialValue={editingProduct ? editingProduct.title : ""}
+          initiallyValid={!!editingProduct}
+          required
         />
         <Input
+          id="imageUrl"
           label="Image URL"
-          value={formState.inputValues.imageUrl}
-          onChangeText={inputChangeHandler.bind(this, "imageUrl")}
           errorText="Please enter a valid Image URL!"
           autoCapitalize="none"
-          autoCorrect
           returnKeyType="next"
+          onInputChange={inputChangeHandler}
+          initialValue={editingProduct ? editingProduct.imageUrl : ""}
+          initiallyValid={!!editingProduct}
+          required
         />
         {editingProduct ? null : (
           <Input
+            id="price"
             label="Price"
-            value={formState.inputValues.price}
-            onChangeText={inputChangeHandler.bind(this, "price")}
             errorText="Please enter a valid price!"
             keyboardType="decimal-pad"
             returnKeyType="next"
+            onInputChange={inputChangeHandler}
+            required
+            min={0.01}
           />
         )}
         <Input
+          id="description"
           label="Description"
-          value={formState.inputValues.description}
-          onChangeText={inputChangeHandler.bind(this, "description")}
           errorText="Please enter a valid description!"
           autoCapitalize="sentences"
           autoCorrect
           multiline
           numberOfLines={3}
           returnKeyType="done"
+          onInputChange={inputChangeHandler}
+          initialValue={editingProduct ? editingProduct.description : ""}
+          initiallyValid={!!editingProduct}
+          required
+          minLength={5}
         />
       </View>
     </ScrollView>
