@@ -1,18 +1,10 @@
 import React, { useCallback, useEffect, useReducer } from "react";
-import {
-  Alert,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Alert, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useDispatch, useSelector } from "react-redux";
 
 import CustomHeaderButton from "../../components/UI/CustomHeaderButton";
-import Theme from "../../constants/Theme";
+import Input from "../../components/UI/Input";
 import * as productsActions from "../../store/actions/products";
 
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
@@ -119,53 +111,45 @@ const EditProductScreen = (props) => {
   return (
     <ScrollView>
       <View style={styles.form}>
-        <View style={styles.formControl}>
-          <Text style={styles.label}>Title</Text>
-          <TextInput
-            style={styles.input}
-            value={formState.inputValues.title}
-            onChangeText={inputChangeHandler.bind(this, "title")}
-            autoCapitalize="words"
-            autoCorrect
-            returnKeyType="next"
-          />
-        </View>
-        {!formState.inputValidities.title && (
-          <Text>Please enter a valid title!</Text>
-        )}
-        <View style={styles.formControl}>
-          <Text style={styles.label}>Image URL</Text>
-          <TextInput
-            style={styles.input}
-            value={formState.inputValues.imageUrl}
-            onChangeText={inputChangeHandler.bind(this, "imageUrl")}
-            autoCapitalize="none"
-            returnKeyType="next"
-          />
-        </View>
+        <Input
+          label="Title"
+          value={formState.inputValues.title}
+          onChangeText={inputChangeHandler.bind(this, "title")}
+          errorText="Please enter a valid Title!"
+          autoCapitalize="words"
+          autoCorrect
+          returnKeyType="next"
+        />
+        <Input
+          label="Image URL"
+          value={formState.inputValues.imageUrl}
+          onChangeText={inputChangeHandler.bind(this, "imageUrl")}
+          errorText="Please enter a valid Image URL!"
+          autoCapitalize="none"
+          autoCorrect
+          returnKeyType="next"
+        />
         {editingProduct ? null : (
-          <View style={styles.formControl}>
-            <Text style={styles.label}>Price</Text>
-            <TextInput
-              style={styles.input}
-              value={formState.inputValues.price}
-              onChangeText={inputChangeHandler.bind(this, "price")}
-              keyboardType="decimal-pad"
-              returnKeyType="next"
-            />
-          </View>
-        )}
-        <View style={styles.formControl}>
-          <Text style={styles.label}>Description</Text>
-          <TextInput
-            style={styles.input}
-            value={formState.inputValues.description}
-            onChangeText={inputChangeHandler.bind(this, "description")}
-            autoCapitalize="sentences"
-            autoCorrect
-            returnKeyType="done"
+          <Input
+            label="Price"
+            value={formState.inputValues.price}
+            onChangeText={inputChangeHandler.bind(this, "price")}
+            errorText="Please enter a valid price!"
+            keyboardType="decimal-pad"
+            returnKeyType="next"
           />
-        </View>
+        )}
+        <Input
+          label="Description"
+          value={formState.inputValues.description}
+          onChangeText={inputChangeHandler.bind(this, "description")}
+          errorText="Please enter a valid description!"
+          autoCapitalize="sentences"
+          autoCorrect
+          multiline
+          numberOfLines={3}
+          returnKeyType="done"
+        />
       </View>
     </ScrollView>
   );
@@ -194,19 +178,6 @@ EditProductScreen.navigationOptions = (navData) => {
 const styles = StyleSheet.create({
   form: {
     margin: 20,
-  },
-  formControl: {
-    width: "100%",
-  },
-  label: {
-    fontFamily: Theme.fonts.bold,
-    marginVertical: 8,
-  },
-  input: {
-    paddingHorizontal: 2,
-    paddingVertical: 5,
-    borderBottomColor: Theme.colors.accent,
-    borderBottomWidth: 1,
   },
 });
 
