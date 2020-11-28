@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Provider } from "react-redux";
-import { combineReducers, createStore } from "redux";
+import { applyMiddleware, combineReducers, createStore } from "redux";
 import { AppLoading } from "expo";
 import * as Font from "expo-font";
+import thunk from "redux-thunk";
 
 import ShopNavigator from "./navigation/ShopNavigator";
 import productsReducer from "./store/reducers/products";
@@ -15,7 +16,7 @@ const rootReducer = combineReducers({
   orders: ordersReducer,
 });
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 let customFonts = {
   "montserrat-regular": require("./assets/fonts/Montserrat-Regular.ttf"),
