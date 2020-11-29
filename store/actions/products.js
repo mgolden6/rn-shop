@@ -9,7 +9,7 @@ export const fetchProducts = () => {
   return async (dispatch) => {
     try {
       const response = await fetch(
-        "https://rn-shop-62a22.firebaseio.com/products.json"
+        `https://rn-shop-62a22.firebaseio.com/products.json`
       );
 
       if (!response.ok) {
@@ -46,7 +46,7 @@ export const fetchProducts = () => {
 export const createProduct = (title, imageUrl, price, description) => {
   return async (dispatch) => {
     const response = await fetch(
-      "https://rn-shop-62a22.firebaseio.com/products.json",
+      `https://rn-shop-62a22.firebaseio.com/products.json`,
       {
         method: "POST",
         headers: {
@@ -63,8 +63,6 @@ export const createProduct = (title, imageUrl, price, description) => {
 
     const resData = await response.json();
 
-    console.log(resData);
-
     dispatch({
       type: CREATE_PRODUCT,
       createProductData: {
@@ -79,20 +77,42 @@ export const createProduct = (title, imageUrl, price, description) => {
 };
 
 export const updateProduct = (id, title, imageUrl, description) => {
-  return {
-    type: UPDATE_PRODUCT,
-    updateProductData: {
-      id,
-      title,
-      imageUrl,
-      description,
-    },
+  return async (dispatch) => {
+    await fetch(`https://rn-shop-62a22.firebaseio.com/products/${id}.json`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        imageUrl,
+        description,
+      }),
+    });
+
+    dispatch({
+      type: UPDATE_PRODUCT,
+      updateProductData: {
+        id,
+        title,
+        imageUrl,
+        description,
+      },
+    });
   };
 };
 
 export const deleteProduct = (productId) => {
-  return {
-    type: DELETE_PRODUCT,
-    productId: productId,
+  return async (dispatch) => {
+    await fetch(
+      `https://rn-shop-62a22.firebaseio.com/products/${productId}.json`,
+      {
+        method: "DELETE",
+      }
+    );
+    dispatch({
+      type: DELETE_PRODUCT,
+      productId: productId,
+    });
   };
 };
