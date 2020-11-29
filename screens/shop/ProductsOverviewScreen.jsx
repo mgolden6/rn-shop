@@ -24,6 +24,7 @@ const ProductsOverviewScreen = (props) => {
   const dispatch = useDispatch();
 
   const loadProducts = useCallback(async () => {
+    console.log(`is loading`);
     setError(null);
     setIsLoading(true);
     try {
@@ -35,8 +36,19 @@ const ProductsOverviewScreen = (props) => {
   }, [dispatch, setIsLoading, setError]);
 
   useEffect(() => {
-    loadProducts();
-  }, [dispatch, loadProducts]);
+    const willFocusSubscription = props.navigation.addListener(
+      "willFocus",
+      loadProducts
+    );
+    return () => {
+      willFocusSubscription.remove();
+    };
+  }, [loadProducts]);
+
+  //! may need to add this back if not recognizing products on initial load
+  // useEffect(() => {
+  //   loadProducts();
+  // }, [dispatch, loadProducts]);
 
   const selectItemHandler = (id, title) => {
     props.navigation.navigate("ProductDetail", {
