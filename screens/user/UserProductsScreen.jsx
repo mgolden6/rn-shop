@@ -1,14 +1,25 @@
-import React from "react";
-import { Alert, Button, FlatList, Platform } from "react-native";
+import React, { useCallback, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Button,
+  FlatList,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import CustomHeaderButton from "../../components/UI/CustomHeaderButton";
 import ProductItem from "../../components/shop/ProductItem";
 import Theme from "../../constants/Theme";
-import * as productActions from "../../store/actions/products";
+import * as productsActions from "../../store/actions/products";
 
 const UserProductsScreen = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   const userProducts = useSelector((state) => state.products.userProducts);
   const dispatch = useDispatch();
 
@@ -16,18 +27,51 @@ const UserProductsScreen = (props) => {
     props.navigation.navigate("EditProduct", { productId: id });
   };
 
-  const deleteProductHandler = (id) => {
-    Alert.alert("Are you sure?", "Do you really want to delete this product?", [
-      { text: "No", style: "default" },
-      {
-        text: "Yes",
-        style: "destructive",
-        onPress: () => {
-          dispatch(productActions.deleteProduct(id));
-        },
-      },
-    ]);
-  };
+  //* something isn't right; fails when error from await
+  //* reproduce by using wrong url for delete call
+  const deleteProductHandler = useCallback(
+    async (id) => {
+      Alert.alert(
+        "Are you sure?",
+        "Do you really want to delete this product?",
+        [
+          { text: "No", style: "default" },
+          {
+            text: "Yes",
+            style: "destructive",
+            onPress: async () => {
+              setError(null);
+              setIsLoading(true);
+              try {
+                await dispatch(productsActions.deleteProduct(id));
+              } catch (err) {
+                setError(err.message);
+              }
+              setIsLoading(false);
+            },
+          },
+        ]
+      );
+    },
+    [dispatch, setError, setIsLoading]
+  );
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        //? maybe use Alert - "OK" - nav back?
+        <Text style={styles.errorMsg}>Failed to delete product!</Text>
+      </View>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Theme.colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <FlatList
@@ -89,5 +133,17 @@ UserProductsScreen.navigationOptions = (navData) => {
     ),
   };
 };
+
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  errorMsg: {
+    fontFamily: Theme.fonts.bold,
+    color: "red",
+  },
+});
 
 export default UserProductsScreen;

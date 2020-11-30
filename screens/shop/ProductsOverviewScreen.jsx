@@ -44,10 +44,10 @@ const ProductsOverviewScreen = (props) => {
     };
   }, [loadProducts]);
 
-  //! may need to add this back if not recognizing products on initial load
-  // useEffect(() => {
-  //   loadProducts();
-  // }, [dispatch, loadProducts]);
+  //? added this back to recognize products on initial load
+  useEffect(() => {
+    loadProducts();
+  }, [dispatch, loadProducts]);
 
   const selectItemHandler = (id, title) => {
     props.navigation.navigate("ProductDetail", {
