@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useCallback, useReducer } from "react";
 import {
   Button,
   KeyboardAvoidingView,
@@ -7,11 +7,74 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { useDispatch } from "react-redux";
+
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Theme from "../../constants/Theme";
+import * as authActions from "../../store/actions/auth";
+
+const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
+
+const formReducer = (state, action) => {
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.inputId]: action.value,
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.inputId]: action.isValid,
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      inputValues: updatedValues,
+      inputValidities: updatedValidities,
+      formIsValid: updatedFormIsValid,
+    };
+  }
+  return state;
+};
 
 const AuthScreen = () => {
+  const dispatch = useDispatch();
+
+  const [formState, dispatchFormState] = useReducer(formReducer, {
+    inputValues: {
+      email: "",
+      password: "",
+    },
+    inputValidities: {
+      email: false,
+      password: false,
+    },
+    formIsValid: false,
+  });
+
+  const signupHandler = () => {
+    dispatch(
+      authActions.signup(
+        formState.inputValues.email,
+        formState.inputValues.password
+      )
+    );
+  };
+
+  const inputChangeHandler = useCallback(
+    (inputId, inputValue, inputValidity) => {
+      dispatchFormState({
+        type: FORM_INPUT_UPDATE,
+        inputId: inputId,
+        value: inputValue,
+        isValid: inputValidity,
+      });
+    },
+    [dispatchFormState]
+  );
+
   return (
     <KeyboardAvoidingView
       behavior="padding"
@@ -31,8 +94,8 @@ const AuthScreen = () => {
               required
               email
               autoCapitalize="none"
-              errorMessage="Please enter a valid email address."
-              onInputChange={() => {}}
+              errorText="Please enter a valid email address."
+              onInputChange={inputChangeHandler}
               initialValue=""
             />
             <Input
@@ -41,17 +104,17 @@ const AuthScreen = () => {
               keyboardType="default"
               secureTextEntry
               required
-              minLength={5}
+              minLength={6}
               autoCapitalize="none"
-              errorMessage="Please enter a valid password."
-              onInputChange={() => {}}
+              errorText="Please enter a valid password."
+              onInputChange={inputChangeHandler}
               initialValue=""
             />
             <View style={styles.buttonContainer}>
               <Button
                 title="Login"
                 color={Theme.colors.primary}
-                onPress={() => {}}
+                onPress={signupHandler}
               />
             </View>
             <View style={styles.buttonContainer}>
