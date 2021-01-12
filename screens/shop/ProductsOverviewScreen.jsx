@@ -33,7 +33,7 @@ const ProductsOverviewScreen = (props) => {
       setError(err.message);
     }
     setIsRefreshing(false);
-  }, [dispatch, setIsLoading, setError]);
+  }, [dispatch, setError, setIsLoading]);
 
   useEffect(() => {
     const willFocusSubscription = props.navigation.addListener(
@@ -63,7 +63,9 @@ const ProductsOverviewScreen = (props) => {
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.errorMsg}>An error occurred!</Text>
+        <Text style={styles.errorMsg}>
+          An error occurred while loading products!
+        </Text>
         <Button
           title="Try again"
           onPress={loadProducts}

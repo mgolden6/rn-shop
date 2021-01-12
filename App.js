@@ -6,11 +6,13 @@ import * as Font from "expo-font";
 import thunk from "redux-thunk";
 
 import ShopNavigator from "./navigation/ShopNavigator";
+import authReducer from "./store/reducers/auth";
 import productsReducer from "./store/reducers/products";
 import cartReducer from "./store/reducers/cart";
 import ordersReducer from "./store/reducers/orders";
 
 const rootReducer = combineReducers({
+  auth: authReducer,
   products: productsReducer,
   cart: cartReducer,
   orders: ordersReducer,

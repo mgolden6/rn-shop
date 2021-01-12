@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Button,
   FlatList,
   Platform,
   StyleSheet,
+  Text,
   View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,15 +18,39 @@ import Theme from "../../constants/Theme";
 
 const OrdersScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   const orders = useSelector((state) => state.orders.orders);
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  const loadOrdersHandler = useCallback(async () => {
+    setError(null);
     setIsLoading(true);
-    dispatch(ordersActions.fetchOrders()).then(() => {
-      setIsLoading(false);
-    });
-  }, [dispatch]);
+    try {
+      await dispatch(ordersActions.fetchOrders());
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsLoading(false);
+  });
+
+  useEffect(() => {
+    loadOrdersHandler();
+  }, []);
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorMsg}>
+          An error occured while loading orders!
+        </Text>
+        <Button
+          title="Try again"
+          onPress={loadOrdersHandler}
+          color={Theme.colors.primary}
+        />
+      </View>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -70,7 +96,11 @@ const styles = StyleSheet.create({
   centered: {
     flex: 1,
     justifyContent: "center",
-    alignContent: "center",
+    alignItems: "center",
+  },
+  errorMsg: {
+    fontFamily: Theme.fonts.bold,
+    color: "red",
   },
 });
 

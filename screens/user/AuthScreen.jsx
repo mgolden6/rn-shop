@@ -41,7 +41,7 @@ const formReducer = (state, action) => {
   return state;
 };
 
-const AuthScreen = () => {
+const AuthScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
   const [isSignup, setIsSignup] = useState(false);
@@ -82,10 +82,11 @@ const AuthScreen = () => {
     setIsLoading(true);
     try {
       await dispatch(action);
+      props.navigation.navigate("Shop");
     } catch (err) {
       setError(err.message);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const inputChangeHandler = useCallback(
@@ -103,7 +104,7 @@ const AuthScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      keyboardVerticalOffset={50}
+      keyboardVerticalOffset={20}
       style={styles.screen}
     >
       <LinearGradient

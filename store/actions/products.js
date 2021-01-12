@@ -6,10 +6,11 @@ export const DELETE_PRODUCT = "DELETE_PRODUCT";
 export const SET_PRODUCTS = "SET_PRODUCTS";
 
 export const fetchProducts = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const idToken = getState().auth.idToken;
     try {
       const response = await fetch(
-        `https://rn-shop-62a22.firebaseio.com/products.json`
+        `https://rn-shop-62a22.firebaseio.com/products.json?auth=${idToken}`
       );
 
       if (!response.ok) {
@@ -44,9 +45,10 @@ export const fetchProducts = () => {
 };
 
 export const createProduct = (title, imageUrl, price, description) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const idToken = getState().auth.idToken;
     const response = await fetch(
-      `https://rn-shop-62a22.firebaseio.com/products.json`,
+      `https://rn-shop-62a22.firebaseio.com/products.json?auth=${idToken}`,
       {
         method: "POST",
         headers: {
@@ -77,9 +79,10 @@ export const createProduct = (title, imageUrl, price, description) => {
 };
 
 export const updateProduct = (id, title, imageUrl, description) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const idToken = getState().auth.idToken;
     const response = await fetch(
-      `https://rn-shop-62a22.firebaseio.com/products/${id}.json`,
+      `https://rn-shop-62a22.firebaseio.com/products/${id}.json?auth=${idToken}`,
       {
         method: "PATCH",
         headers: {
@@ -111,9 +114,10 @@ export const updateProduct = (id, title, imageUrl, description) => {
 };
 
 export const deleteProduct = (productId) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const idToken = getState().auth.idToken;
     const response = await fetch(
-      `https://rn-shop-62a22.firebaseio.com/products/${productId}.json`,
+      `https://rn-shop-62a22.firebaseio.com/products/${productId}.json?auth=${idToken}`,
       {
         method: "DELETE",
       }

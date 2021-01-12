@@ -32,7 +32,14 @@ export const signup = (email, password) => {
         throw new Error(errorId);
       }
 
-      dispatch({ type: SIGNUP });
+      dispatch({
+        type: SIGNUP,
+        email: responseData.email,
+        localId: responseData.localId,
+        idToken: responseData.idToken,
+        refreshToken: responseData.refreshToken,
+        expiresIn: responseData.expiresIn,
+      });
     } catch (error) {
       errorId = error.message;
       errorMessage = "Something went wrong with Sign Up!";
@@ -74,7 +81,14 @@ export const signin = (email, password) => {
         throw new Error(errorId);
       }
 
-      dispatch({ type: SIGNIN });
+      dispatch({
+        type: SIGNIN,
+        email: responseData.email,
+        localId: responseData.localId,
+        idToken: responseData.idToken,
+        refreshToken: responseData.refreshToken,
+        expiresIn: responseData.expiresIn,
+      });
     } catch (error) {
       errorId = error.message;
       errorMessage = "Something went wrong with Sign In!";
