@@ -6,13 +6,13 @@ export const SET_ORDERS = "SET_ORDERS";
 export const fetchOrders = () => {
   return async (dispatch, getState) => {
     const idToken = getState().auth.idToken;
+    const localId = getState().auth.localId;
     try {
       const response = await fetch(
-        `https://rn-shop-62a22.firebaseio.com/orders/u1.json?auth=${idToken}`
+        `https://rn-shop-62a22.firebaseio.com/orders/${localId}.json?auth=${idToken}`
       );
 
       if (!response.ok) {
-        console.log(`fetchOrders error: ${response}`);
         throw new Error(`Something went wrong fetching orders!`);
       }
 
@@ -41,11 +41,12 @@ export const fetchOrders = () => {
 
 export const addOrder = (cartItems, totalAmount) => {
   return async (dispatch, getState) => {
-    const date = new Date();
     const idToken = getState().auth.idToken;
+    const localId = getState().auth.localId;
+    const date = new Date();
     try {
       const response = await fetch(
-        `https://rn-shop-62a22.firebaseio.com/orders/u1.json?auth=${idToken}`,
+        `https://rn-shop-62a22.firebaseio.com/orders/${localId}.json?auth=${idToken}`,
         {
           method: "POST",
           headers: {

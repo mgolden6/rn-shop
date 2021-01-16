@@ -38,6 +38,7 @@ const CartScreen = (props) => {
   const dispatch = useDispatch();
 
   const submitOrderHandler = useCallback(async () => {
+    setError(null);
     setIsLoading(true);
     try {
       await dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));

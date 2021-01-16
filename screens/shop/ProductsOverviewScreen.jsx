@@ -34,7 +34,9 @@ const ProductsOverviewScreen = (props) => {
     }
     setIsRefreshing(false);
   }, [dispatch, setError, setIsLoading]);
+  //! is setIsLoading right above, or shoud it be setIsRefreshing?
 
+  //! Isn't there a lesson where "willFocus" doesn't exist now?
   useEffect(() => {
     const willFocusSubscription = props.navigation.addListener(
       "willFocus",
@@ -46,6 +48,8 @@ const ProductsOverviewScreen = (props) => {
   }, [loadProducts]);
 
   //? added this back to recognize products on initial load
+  //! Is THIS MY PROBLEM???
+  //! do I need this useEffect and the one above??
   useEffect(() => {
     setIsLoading(true);
     loadProducts().then(() => {

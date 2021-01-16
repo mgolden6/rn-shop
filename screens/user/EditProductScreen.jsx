@@ -97,8 +97,8 @@ const EditProductScreen = (props) => {
           productsActions.createProduct(
             formState.inputValues.title,
             formState.inputValues.imageUrl,
-            +formState.inputValues.price,
-            formState.inputValues.description
+            formState.inputValues.description,
+            +formState.inputValues.price
           )
         );
       }

@@ -8,13 +8,12 @@ export const SET_PRODUCTS = "SET_PRODUCTS";
 export const fetchProducts = () => {
   return async (dispatch, getState) => {
     const idToken = getState().auth.idToken;
+    const localId = getState().auth.localId;
     try {
       const response = await fetch(
         `https://rn-shop-62a22.firebaseio.com/products.json?auth=${idToken}`
       );
-
       if (!response.ok) {
-        console.log(`fetchProducts error: ${response}`);
         throw new Error("Fetch Products Failed!");
       }
 
@@ -25,7 +24,7 @@ export const fetchProducts = () => {
         loadedProducts.push(
           new Product(
             key,
-            "u1",
+            resData[key].ownerId,
             resData[key].title,
             resData[key].imageUrl,
             resData[key].description,
@@ -37,6 +36,7 @@ export const fetchProducts = () => {
       dispatch({
         type: SET_PRODUCTS,
         products: loadedProducts,
+        userProducts: loadedProducts.filter((prod) => prod.ownerId === localId),
       });
     } catch (err) {
       throw err;
@@ -44,9 +44,10 @@ export const fetchProducts = () => {
   };
 };
 
-export const createProduct = (title, imageUrl, price, description) => {
+export const createProduct = (title, imageUrl, description, price) => {
   return async (dispatch, getState) => {
     const idToken = getState().auth.idToken;
+    const localId = getState().auth.localId;
     const response = await fetch(
       `https://rn-shop-62a22.firebaseio.com/products.json?auth=${idToken}`,
       {
@@ -55,24 +56,27 @@ export const createProduct = (title, imageUrl, price, description) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          ownerId: localId,
           title,
           imageUrl,
-          price,
           description,
+          price,
         }),
       }
     );
 
     const resData = await response.json();
+    console.log(resData);
 
     dispatch({
       type: CREATE_PRODUCT,
       createProductData: {
         id: resData.name,
+        ownerId: localId,
         title,
         imageUrl,
-        price,
         description,
+        price,
       },
     });
   };
