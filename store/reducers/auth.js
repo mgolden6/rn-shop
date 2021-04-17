@@ -1,4 +1,4 @@
-import { AUTHENTICATE, SIGNIN, SIGNUP } from "../actions/auth";
+import { AUTHENTICATE, LOGOUT, SIGNIN, SIGNUP } from "../actions/auth";
 
 const initialState = {
   email: null,
@@ -34,6 +34,8 @@ export default (state = initialState, action) => {
         refreshToken: action.refreshToken,
         expirationDate: action.expirationDate,
       };
+    case LOGOUT:
+      return initialState;
     default:
       return state;
   }

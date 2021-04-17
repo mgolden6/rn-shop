@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 export const SIGNUP = "SIGNUP";
 export const SIGNIN = "SIGNIN";
 export const AUTHENTICATE = "AUTHENTICATE";
+export const LOGOUT = "LOGOUT";
 
 let response;
 let responseData;
@@ -179,4 +180,8 @@ export const authenticate = (
       console.log(error);
     }
   };
+};
+
+export const logout = () => {
+  return { type: LOGOUT };
 };
