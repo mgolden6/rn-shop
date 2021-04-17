@@ -1,11 +1,11 @@
-import { SIGNIN, SIGNUP } from "../actions/auth";
+import { AUTHENTICATE, SIGNIN, SIGNUP } from "../actions/auth";
 
 const initialState = {
   email: null,
   localId: null,
   idToken: null,
   refreshToken: null,
-  expiresIn: null,
+  expirationDate: null,
 };
 
 export default (state = initialState, action) => {
@@ -16,7 +16,7 @@ export default (state = initialState, action) => {
         localId: action.localId,
         idToken: action.idToken,
         refreshToken: action.refreshToken,
-        expiresIn: action.expiresIn,
+        expirationDate: action.expirationDate,
       };
     case SIGNIN:
       return {
@@ -24,7 +24,15 @@ export default (state = initialState, action) => {
         localId: action.localId,
         idToken: action.idToken,
         refreshToken: action.refreshToken,
-        expiresIn: action.expiresIn,
+        expirationDate: action.expirationDate,
+      };
+    case AUTHENTICATE:
+      return {
+        email: action.email,
+        localId: action.localId,
+        idToken: action.idToken,
+        refreshToken: action.refreshToken,
+        expirationDate: action.expirationDate,
       };
     default:
       return state;

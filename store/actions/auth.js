@@ -1,12 +1,15 @@
 import ENV from "../../env";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export const SIGNUP = "SIGNUP";
 export const SIGNIN = "SIGNIN";
+export const AUTHENTICATE = "AUTHENTICATE";
 
 let response;
 let responseData;
 let errorId;
 let errorMessage;
+let expirationDate;
 
 export const signup = (email, password) => {
   return async (dispatch) => {
@@ -32,13 +35,25 @@ export const signup = (email, password) => {
         throw new Error(errorId);
       }
 
+      expirationDate = new Date(
+        new Date().getTime() + parseInt(responseData.expiresIn) * 1000
+      );
+      console.log(expirationDate.toISOString());
+      saveUserAuthData(
+        email,
+        responseData.localId,
+        responseData.idToken,
+        responseData.refreshToken,
+        expirationDate.toISOString()
+      );
+
       dispatch({
         type: SIGNUP,
         email: responseData.email,
         localId: responseData.localId,
         idToken: responseData.idToken,
         refreshToken: responseData.refreshToken,
-        expiresIn: responseData.expiresIn,
+        expirationDate,
       });
     } catch (error) {
       errorId = error.message;
@@ -81,13 +96,26 @@ export const signin = (email, password) => {
         throw new Error(errorId);
       }
 
+      expirationDate = new Date(
+        new Date().getTime() + parseInt(responseData.expiresIn) * 1000
+      );
+      console.log(expirationDate.toISOString());
+
+      saveUserAuthData(
+        email,
+        responseData.localId,
+        responseData.idToken,
+        responseData.refreshToken,
+        expirationDate.toISOString()
+      );
+
       dispatch({
         type: SIGNIN,
         email: responseData.email,
         localId: responseData.localId,
         idToken: responseData.idToken,
         refreshToken: responseData.refreshToken,
-        expiresIn: responseData.expiresIn,
+        expirationDate,
       });
     } catch (error) {
       errorId = error.message;
@@ -102,6 +130,53 @@ export const signin = (email, password) => {
           "The user account has been disabled by an administrator.";
       }
       throw new Error(errorMessage);
+    }
+  };
+};
+
+const saveUserAuthData = async (
+  email,
+  localId,
+  idToken,
+  refreshToken,
+  expirationDateString
+) => {
+  try {
+    console.log(email);
+    await AsyncStorage.setItem(
+      "userAuthData",
+      JSON.stringify({
+        email,
+        localId,
+        idToken,
+        refreshToken,
+        expirationDateString,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const authenticate = (
+  email,
+  localId,
+  idToken,
+  refreshToken,
+  expirationDate
+) => {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: AUTHENTICATE,
+        email,
+        localId,
+        idToken,
+        refreshToken,
+        expirationDate,
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
 };
