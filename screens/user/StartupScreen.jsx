@@ -12,11 +12,11 @@ const StartupScreen = (props) => {
     const tryAutoLogin = async () => {
       const userAuthDataString = await AsyncStorage.getItem("userAuthData");
       if (!userAuthDataString) {
+        console.log(`Tried AutoLogin: nothing in AsyncStorage for this user`);
         props.navigation.navigate("Auth");
         return;
       }
       const userAuthDataObject = JSON.parse(userAuthDataString);
-      console.log(userAuthDataObject);
       const {
         email,
         localId,
@@ -26,11 +26,6 @@ const StartupScreen = (props) => {
       } = userAuthDataObject;
       const expirationDate = new Date(expirationDateString);
 
-      console.log(email);
-      console.log(localId);
-      console.log(idToken);
-      console.log(expirationDateString);
-      console.log(new Date());
       if (
         !email ||
         !localId ||
@@ -38,7 +33,6 @@ const StartupScreen = (props) => {
         !refreshToken ||
         expirationDate <= new Date()
       ) {
-        console.log(`expirationDate <= new Date()`);
         props.navigation.navigate("Auth");
         return;
       }

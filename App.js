@@ -5,7 +5,7 @@ import { AppLoading } from "expo";
 import * as Font from "expo-font";
 import thunk from "redux-thunk";
 
-import ShopNavigator from "./navigation/ShopNavigator";
+import NavigationContainer from "./navigation/NavigationContainer";
 import authReducer from "./store/reducers/auth";
 import productsReducer from "./store/reducers/products";
 import cartReducer from "./store/reducers/cart";
@@ -45,7 +45,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <ShopNavigator />
+      <NavigationContainer />
     </Provider>
   );
 }

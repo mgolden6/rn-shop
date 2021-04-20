@@ -11,6 +11,7 @@ let responseData;
 let errorId;
 let errorMessage;
 let expirationDate;
+let logoutTimer;
 
 export const signup = (email, password) => {
   return async (dispatch) => {
@@ -29,6 +30,7 @@ export const signup = (email, password) => {
           }),
         }
       );
+
       responseData = await response.json();
 
       if (!response.ok) {
@@ -36,25 +38,28 @@ export const signup = (email, password) => {
         throw new Error(errorId);
       }
 
+      const { localId, idToken, refreshToken, expiresIn } = responseData;
+
       expirationDate = new Date(
-        new Date().getTime() + parseInt(responseData.expiresIn) * 1000
+        new Date().getTime() + parseInt(expiresIn) * 1000
       );
-      console.log(expirationDate.toISOString());
+
       saveUserAuthData(
         email,
-        responseData.localId,
-        responseData.idToken,
-        responseData.refreshToken,
+        localId,
+        idToken,
+        refreshToken,
         expirationDate.toISOString()
       );
 
+      dispatch(setLogoutTimer(expirationDate));
       dispatch({
         type: SIGNUP,
-        email: responseData.email,
-        localId: responseData.localId,
-        idToken: responseData.idToken,
-        refreshToken: responseData.refreshToken,
-        expirationDate,
+        email,
+        localId,
+        idToken,
+        refreshToken,
+        expirationDate: expirationDate.toISOString(),
       });
     } catch (error) {
       errorId = error.message;
@@ -97,26 +102,28 @@ export const signin = (email, password) => {
         throw new Error(errorId);
       }
 
+      const { localId, idToken, refreshToken, expiresIn } = responseData;
+
       expirationDate = new Date(
-        new Date().getTime() + parseInt(responseData.expiresIn) * 1000
+        new Date().getTime() + parseInt(expiresIn) * 1000
       );
-      console.log(expirationDate.toISOString());
 
       saveUserAuthData(
         email,
-        responseData.localId,
-        responseData.idToken,
-        responseData.refreshToken,
+        localId,
+        idToken,
+        refreshToken,
         expirationDate.toISOString()
       );
 
+      dispatch(setLogoutTimer(expirationDate));
       dispatch({
         type: SIGNIN,
-        email: responseData.email,
-        localId: responseData.localId,
-        idToken: responseData.idToken,
-        refreshToken: responseData.refreshToken,
-        expirationDate,
+        email,
+        localId,
+        idToken,
+        refreshToken,
+        expirationDate: expirationDate.toISOString(),
       });
     } catch (error) {
       errorId = error.message;
@@ -135,30 +142,6 @@ export const signin = (email, password) => {
   };
 };
 
-const saveUserAuthData = async (
-  email,
-  localId,
-  idToken,
-  refreshToken,
-  expirationDateString
-) => {
-  try {
-    console.log(email);
-    await AsyncStorage.setItem(
-      "userAuthData",
-      JSON.stringify({
-        email,
-        localId,
-        idToken,
-        refreshToken,
-        expirationDateString,
-      })
-    );
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 export const authenticate = (
   email,
   localId,
@@ -168,6 +151,7 @@ export const authenticate = (
 ) => {
   return async (dispatch) => {
     try {
+      dispatch(setLogoutTimer(expirationDate));
       dispatch({
         type: AUTHENTICATE,
         email,
@@ -183,5 +167,50 @@ export const authenticate = (
 };
 
 export const logout = () => {
-  return { type: LOGOUT };
+  return async (dispatch) => {
+    try {
+      clearLogoutTimer();
+      await AsyncStorage.removeItem("userAuthData");
+      dispatch({ type: LOGOUT });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+const saveUserAuthData = async (
+  email,
+  localId,
+  idToken,
+  refreshToken,
+  expirationDateString
+) => {
+  try {
+    await AsyncStorage.setItem(
+      "userAuthData",
+      JSON.stringify({
+        email,
+        localId,
+        idToken,
+        refreshToken,
+        expirationDateString,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const setLogoutTimer = (expirationDate) => {
+  return (dispatch) => {
+    logoutTimer = setTimeout(() => {
+      dispatch(logout());
+    }, expirationDate.getTime() - new Date().getTime());
+  };
+};
+
+const clearLogoutTimer = () => {
+  if (logoutTimer) {
+    clearTimeout(logoutTimer);
+  }
 };
