@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Provider } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
-import { AppLoading } from "expo";
+import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
 import thunk from "redux-thunk";
 
@@ -39,6 +39,7 @@ export default function App() {
         onFinish={() => {
           setFontLoaded(true);
         }}
+        onError={console.warn}
       />
     );
   }
