@@ -5,11 +5,11 @@ import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
 import thunk from "redux-thunk";
 
-import NavigationContainer from "./navigation/NavigationContainer";
 import authReducer from "./store/reducers/auth";
 import productsReducer from "./store/reducers/products";
 import cartReducer from "./store/reducers/cart";
 import ordersReducer from "./store/reducers/orders";
+import AppNavigator from "./navigation/AppNavigator";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -46,7 +46,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NavigationContainer />
+      <AppNavigator />
     </Provider>
   );
 }

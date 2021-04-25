@@ -72,7 +72,6 @@ const UserProductsScreen = (props) => {
       </View>
     );
   }
-
   return (
     <FlatList
       data={userProducts}
@@ -106,7 +105,7 @@ const UserProductsScreen = (props) => {
   );
 };
 
-UserProductsScreen.navigationOptions = (navData) => {
+export const screenOptions = (navData) => {
   return {
     headerTitle: "Your Products",
     headerLeft: () => (

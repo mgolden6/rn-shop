@@ -1,6 +1,7 @@
 import ENV from "../../env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+export const TRIED_AUTO_LOGIN = "TRIED_AUTO_LOGIN";
 export const SIGNUP = "SIGNUP";
 export const SIGNIN = "SIGNIN";
 export const AUTHENTICATE = "AUTHENTICATE";
@@ -12,6 +13,10 @@ let errorId;
 let errorMessage;
 let expirationDate;
 let logoutTimer;
+
+export const triedAutoLogin = () => {
+  return { type: TRIED_AUTO_LOGIN };
+};
 
 export const signup = (email, password) => {
   return async (dispatch) => {

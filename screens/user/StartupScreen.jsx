@@ -4,7 +4,7 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { useDispatch } from "react-redux";
 
 import Theme from "../../constants/Theme";
-import { authenticate } from "../../store/actions/auth";
+import { authenticate, triedAutoLogin } from "../../store/actions/auth";
 
 const StartupScreen = (props) => {
   const dispatch = useDispatch();
@@ -12,8 +12,7 @@ const StartupScreen = (props) => {
     const tryAutoLogin = async () => {
       const userAuthDataString = await AsyncStorage.getItem("userAuthData");
       if (!userAuthDataString) {
-        console.log(`Tried AutoLogin: nothing in AsyncStorage for this user`);
-        props.navigation.navigate("Auth");
+        dispatch(triedAutoLogin());
         return;
       }
       const userAuthDataObject = JSON.parse(userAuthDataString);
@@ -33,10 +32,9 @@ const StartupScreen = (props) => {
         !refreshToken ||
         expirationDate <= new Date()
       ) {
-        props.navigation.navigate("Auth");
+        dispatch(triedAutoLogin());
         return;
       }
-      props.navigation.navigate("Shop");
       dispatch(
         authenticate(email, localId, idToken, refreshToken, expirationDate)
       );

@@ -36,14 +36,10 @@ const ProductsOverviewScreen = (props) => {
   }, [dispatch, setError, setIsLoading]);
   //! is setIsLoading right above, or shoud it be setIsRefreshing?
 
-  //! Isn't there a lesson where "willFocus" doesn't exist now?
   useEffect(() => {
-    const willFocusSubscription = props.navigation.addListener(
-      "willFocus",
-      loadProducts
-    );
+    const unsubscribe = props.navigation.addListener("focus", loadProducts);
     return () => {
-      willFocusSubscription.remove();
+      unsubscribe();
     };
   }, [loadProducts]);
 
@@ -133,7 +129,7 @@ const ProductsOverviewScreen = (props) => {
   );
 };
 
-ProductsOverviewScreen.navigationOptions = (navData) => {
+export const screenOptions = (navData) => {
   return {
     headerTitle: "All Products",
     headerLeft: () => (
