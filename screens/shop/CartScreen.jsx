@@ -96,7 +96,7 @@ const CartScreen = (props) => {
   );
 };
 
-export const screenOptions = {
+export const cartScreenOptions = {
   headerTitle: "Your Cart",
 };
 

@@ -2,8 +2,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 
-import { AuthNavigator, ShopNavigator } from "./ShopNavigator";
 import StartupScreen from "../screens/user/StartupScreen";
+import AuthNavigator from "./AuthStackNavigator";
+import ShopNavigator from "./ShopDrawerNavigator";
 
 const AppNavigator = () => {
   const triedAutoLogin = useSelector((state) => state.auth.triedAutoLogin);
@@ -11,8 +12,8 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      {!isUserAuthenticated && !triedAutoLogin && <StartupScreen />}
-      {!isUserAuthenticated && triedAutoLogin && <AuthNavigator />}
+      {!triedAutoLogin && !isUserAuthenticated && <StartupScreen />}
+      {triedAutoLogin && !isUserAuthenticated && <AuthNavigator />}
       {isUserAuthenticated && <ShopNavigator />}
     </NavigationContainer>
   );

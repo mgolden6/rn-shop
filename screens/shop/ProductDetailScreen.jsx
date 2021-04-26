@@ -36,7 +36,7 @@ const ProductDetailScreen = (props) => {
   );
 };
 
-export const screenOptions = (navData) => {
+export const productDetailScreenOptions = (navData) => {
   return {
     headerTitle: navData.route.params.productTitle,
   };

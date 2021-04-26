@@ -208,7 +208,7 @@ const EditProductScreen = (props) => {
   );
 };
 
-export const screenOptions = (navData) => {
+export const editProductScreenOptions = (navData) => {
   const routeParams = navData.route.params ? navData.route.params : {};
   return {
     headerTitle: routeParams.productId ? "Edit Product" : "Add Product",
