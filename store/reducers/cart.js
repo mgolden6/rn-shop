@@ -12,6 +12,7 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case ADD_TO_CART:
       const addedProduct = action.product;
+      const ownerPushToken = addedProduct.ownerPushToken;
       const productTitle = addedProduct.title;
       const productPrice = addedProduct.price;
 
@@ -20,6 +21,7 @@ export default (state = initialState, action) => {
       if (state.items[addedProduct.id]) {
         updatedOrNewCartItem = new CartItem(
           state.items[addedProduct.id].quantity + 1,
+          ownerPushToken,
           productTitle,
           productPrice,
           state.items[addedProduct.id].sum + productPrice
@@ -27,6 +29,7 @@ export default (state = initialState, action) => {
       } else {
         updatedOrNewCartItem = new CartItem(
           1,
+          ownerPushToken,
           productTitle,
           productPrice,
           productPrice
@@ -44,6 +47,7 @@ export default (state = initialState, action) => {
       if (selectedCartItemQty > 1) {
         const updatedCartItem = new CartItem(
           selectedCartItemQty - 1,
+          selectedCartItem.ownerPushToken,
           selectedCartItem.productTitle,
           selectedCartItem.productPrice,
           selectedCartItem.sum - selectedCartItem.productPrice

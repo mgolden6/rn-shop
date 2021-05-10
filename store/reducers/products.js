@@ -13,15 +13,11 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case SET_PRODUCTS:
-      return {
-        userProducts: action.userProducts,
-        availableProducts: action.products,
-      };
     case CREATE_PRODUCT:
       const newProduct = new Product(
         action.createProductData.id,
         action.createProductData.ownerId,
+        action.createProductData.ownerPushToken,
         action.createProductData.title,
         action.createProductData.imageUrl,
         action.createProductData.description,
@@ -32,6 +28,13 @@ export default (state = initialState, action) => {
         userProducts: state.userProducts.concat(newProduct),
         availableProducts: state.availableProducts.concat(newProduct),
       };
+
+    case SET_PRODUCTS:
+      return {
+        userProducts: action.userProducts,
+        availableProducts: action.products,
+      };
+
     case UPDATE_PRODUCT:
       const userProductIndex = state.userProducts.findIndex(
         (userProduct) => userProduct.id === action.updateProductData.id
@@ -43,6 +46,7 @@ export default (state = initialState, action) => {
       const updatedProduct = new Product(
         action.updateProductData.id,
         state.userProducts[userProductIndex].ownerId,
+        state.userProducts[userProductIndex].ownerPushToken,
         action.updateProductData.title,
         action.updateProductData.imageUrl,
         action.updateProductData.description,
@@ -57,6 +61,7 @@ export default (state = initialState, action) => {
         userProducts: updatedUserProducts,
         availableProducts: updatedAvailableProducts,
       };
+
     case DELETE_PRODUCT:
       return {
         ...state,

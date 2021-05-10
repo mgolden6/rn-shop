@@ -1,9 +1,78 @@
 import Product from "../../models/product";
+import * as Notifications from "expo-notifications";
+import * as Permissions from "expo-permissions";
 
 export const CREATE_PRODUCT = "CREATE_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const DELETE_PRODUCT = "DELETE_PRODUCT";
 export const SET_PRODUCTS = "SET_PRODUCTS";
+
+// export const getPushToken = async () => {
+//   let pushToken;
+//   let pushTokenObj = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+//   if (pushTokenObj.status !== "granted") {
+//     pushTokenObj = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+//   }
+//   if (pushTokenObj.status !== "granted") {
+//     pushToken = null;
+//   } else {
+//     pushToken = (await Notifications.getExpoPushTokenAsync()).data;
+//   }
+//   console.log(`getPushToken function: ${pushToken}`);
+//   return pushToken;
+// };
+
+export const createProduct = (title, imageUrl, description, price) => {
+  return async (dispatch, getState) => {
+    // const ownerPushToken = getPushToken();
+    let pushToken;
+    let pushTokenObj = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+    if (pushTokenObj.status !== "granted") {
+      pushTokenObj = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    }
+    if (pushTokenObj.status !== "granted") {
+      pushToken = null;
+    } else {
+      pushToken = (await Notifications.getExpoPushTokenAsync()).data;
+    }
+
+    const idToken = getState().auth.idToken;
+    const localId = getState().auth.localId;
+    const response = await fetch(
+      `https://rn-shop-62a22.firebaseio.com/products.json?auth=${idToken}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ownerId: localId,
+          ownerPushToken: pushToken,
+          title,
+          imageUrl,
+          description,
+          price,
+        }),
+      }
+    );
+
+    //? is this next line being used (should be for error?)
+    const resData = await response.json();
+
+    dispatch({
+      type: CREATE_PRODUCT,
+      createProductData: {
+        id: resData.name,
+        ownerId: localId,
+        ownerPushToken: pushToken,
+        title,
+        imageUrl,
+        description,
+        price,
+      },
+    });
+  };
+};
 
 export const fetchProducts = () => {
   return async (dispatch, getState) => {
@@ -25,6 +94,7 @@ export const fetchProducts = () => {
           new Product(
             key,
             resData[key].ownerId,
+            resData[key].ownerPushToken,
             resData[key].title,
             resData[key].imageUrl,
             resData[key].description,
@@ -41,43 +111,6 @@ export const fetchProducts = () => {
     } catch (err) {
       throw err;
     }
-  };
-};
-
-export const createProduct = (title, imageUrl, description, price) => {
-  return async (dispatch, getState) => {
-    const idToken = getState().auth.idToken;
-    const localId = getState().auth.localId;
-    const response = await fetch(
-      `https://rn-shop-62a22.firebaseio.com/products.json?auth=${idToken}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ownerId: localId,
-          title,
-          imageUrl,
-          description,
-          price,
-        }),
-      }
-    );
-
-    const resData = await response.json();
-
-    dispatch({
-      type: CREATE_PRODUCT,
-      createProductData: {
-        id: resData.name,
-        ownerId: localId,
-        title,
-        imageUrl,
-        description,
-        price,
-      },
-    });
   };
 };
 

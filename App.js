@@ -4,12 +4,19 @@ import { applyMiddleware, combineReducers, createStore } from "redux";
 import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
 import thunk from "redux-thunk";
+import * as Notifications from "expo-notifications";
 
 import authReducer from "./store/reducers/auth";
 import productsReducer from "./store/reducers/products";
 import cartReducer from "./store/reducers/cart";
 import ordersReducer from "./store/reducers/orders";
 import AppNavigator from "./navigation/AppNavigator";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return { shouldShowAlert: true };
+  },
+});
 
 const rootReducer = combineReducers({
   auth: authReducer,
